@@ -47,7 +47,7 @@ class EnemyLogic {
         return null;
     }
 
-    static move = (positionObj, gameAreaBoundaries, enemyRef,enemyIndex,setEnemyObjs,enemyObjs, playerRef) => {
+    static move = (positionObj, gameAreaBoundaries, enemyRef,enemyIndex,setEnemyObjs,enemyObjs, playerRef,reducePlayerScore) => {
         let directions = ["up","down","left","right"];
         let direction = directions[Math.floor(Math.random() * directions.length)];
         let temp = {top: 0, bottom: 0, left: 0, right: 0};
@@ -57,9 +57,10 @@ class EnemyLogic {
         temp.left = positionObj.left;
 
         setInterval(()=> {
+            if(enemyRef.current!==null){
 
             let overlappingPlayer = PositionHelper.enemyCheckPlayerOverLap(playerRef,enemyRef);
-            if(overlappingPlayer) alert("Enemy overlapping player");
+            if(overlappingPlayer) reducePlayerScore()
 
             let actualPosition = enemyRef.current.getBoundingClientRect();
             if(direction==="up"&&gameAreaBoundaries.top!==temp.top) {
@@ -107,6 +108,7 @@ class EnemyLogic {
             tempEnemyObjs[enemyIndex].position = temp;
 
             setEnemyObjs(tempEnemyObjs);
+            }
         },250)
     }
 

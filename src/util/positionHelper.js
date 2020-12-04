@@ -1,5 +1,7 @@
 import EnemyClass from "../entity/enemyClass";
 import EntityPositionObject from "../entity/entityPositionObject";
+import HealthItemClass from "../entity/heathItemClass";
+ 
 class PositionHelper {
 
     /**
@@ -26,8 +28,8 @@ class PositionHelper {
     /**
      * Checks if there is an entity at the requested location
      * @param {{top: 0, bottom: 0, left: 0, right: 0}} playerPosition 
-     * @param {[EntityPositionObject]} enemyPostions 
-     * @param {[EntityPositionObject]} itemPositions 
+     * @param {[EnemyClass]} enemyPostions 
+     * @param {[HealthItemClass]} itemPositions 
      * @param {{top: 0, bottom: 0, left: 0, right: 0}} requestedPostion 
      */
     static checkIfPositionOccupied = (playerPosition, enemyPostions, itemPositions,requestedPostion) => {
@@ -43,20 +45,20 @@ class PositionHelper {
 
         enemyPostions.forEach(positionObj => {
             if(
-                positionObj.enemyPostion.left === requestedPostion.left&&
-                positionObj.enemyPostion.right === requestedPostion.right&&
-                positionObj.enemyPostion.top === requestedPostion.top&&
-                positionObj.enemyPostion.bottom === requestedPostion.bottom
+                positionObj.position.left === requestedPostion.left&&
+                positionObj.position.right === requestedPostion.right&&
+                positionObj.position.top === requestedPostion.top&&
+                positionObj.position.bottom === requestedPostion.bottom
             ) postionOccupied = true;
         })
         if(postionOccupied) return true;
 
         itemPositions.forEach(positionObj => {
             if(
-                positionObj.enemyPostion.left === requestedPostion.left&&
-                positionObj.enemyPostion.right === requestedPostion.right&&
-                positionObj.enemyPostion.top === requestedPostion.top&&
-                positionObj.enemyPostion.bottom === requestedPostion.bottom
+                positionObj.position.left === requestedPostion.left&&
+                positionObj.position.right === requestedPostion.right&&
+                positionObj.position.top === requestedPostion.top&&
+                positionObj.position.bottom === requestedPostion.bottom
             ) postionOccupied = true;
         })
         
@@ -103,31 +105,33 @@ class PositionHelper {
  */
     static playerEnemyOverLapCheckByRef = (playerRef, enemyClass="enemy") => {
 
-        let playerPosition = playerRef.current.getBoundingClientRect();
+        if(playerRef.current!==null){
+            let playerPosition = playerRef.current.getBoundingClientRect();
 
-        let enemies = document.getElementsByClassName(enemyClass);
-        let enemyObjs = [];
+            let enemies = document.getElementsByClassName(enemyClass);
+            let enemyObjs = [];
 
-        for(let i = 0; i<enemies.length; i++){
-            let position = enemies[i].getBoundingClientRect();
-            enemyObjs.push(position);
+            for(let i = 0; i<enemies.length; i++){
+                let position = enemies[i].getBoundingClientRect();
+                enemyObjs.push(position);
+            }
+
+            console.log(playerPosition,enemyObjs)
+
+            let left = false;
+            let right = false;
+            let top = false;
+            let bottom = false;
+
+            for(let i = 0; i <enemyObjs.length; i++){
+                    left = this.positionRangeChecker(playerPosition.left, enemyObjs[i],'horizantal');
+                    right = this.positionRangeChecker(playerPosition.right, enemyObjs[i],'horizantal');
+                    top = this.positionRangeChecker(playerPosition.top, enemyObjs[i],'vertical');
+                    bottom = this.positionRangeChecker(playerPosition.bottom, enemyObjs[i],'vertical');
+                    console.log(left,right,top,bottom)
+                    if((left||right) && (top||bottom)) return i;
+            }
         }
-
-        console.log(playerPosition,enemyObjs)
-
-        let left = false;
-        let right = false;
-        let top = false;
-        let bottom = false;
-
-       for(let i = 0; i <enemyObjs.length; i++){
-            left = this.positionRangeChecker(playerPosition.left, enemyObjs[i],'horizantal');
-            right = this.positionRangeChecker(playerPosition.right, enemyObjs[i],'horizantal');
-            top = this.positionRangeChecker(playerPosition.top, enemyObjs[i],'vertical');
-            bottom = this.positionRangeChecker(playerPosition.bottom, enemyObjs[i],'vertical');
-            console.log(left,right,top,bottom)
-            if((left||right) && (top||bottom)) return i;
-       }
 
         return null;
     }
@@ -140,20 +144,22 @@ class PositionHelper {
      * @returns {boolean}
      */
     static enemyCheckPlayerOverLap = (playerRef, enemyRef) => {
-        let playerPosition = playerRef.current.getBoundingClientRect();
-        let enemyPosition = enemyRef.current.getBoundingClientRect();
+        if(playerRef.current!==null&&enemyRef.current!==null){
+            let playerPosition = playerRef.current.getBoundingClientRect();
+            let enemyPosition = enemyRef.current.getBoundingClientRect();
 
-        let left = false;
-        let right = false;
-        let top = false;
-        let bottom = false;
+            let left = false;
+            let right = false;
+            let top = false;
+            let bottom = false;
 
-        left = this.positionRangeChecker(playerPosition.left, enemyPosition,'horizantal');
-        right = this.positionRangeChecker(playerPosition.right, enemyPosition,'horizantal');
-        top = this.positionRangeChecker(playerPosition.top, enemyPosition,'vertical');
-        bottom = this.positionRangeChecker(playerPosition.bottom, enemyPosition,'vertical');
+            left = this.positionRangeChecker(playerPosition.left, enemyPosition,'horizantal');
+            right = this.positionRangeChecker(playerPosition.right, enemyPosition,'horizantal');
+            top = this.positionRangeChecker(playerPosition.top, enemyPosition,'vertical');
+            bottom = this.positionRangeChecker(playerPosition.bottom, enemyPosition,'vertical');
 
-        if((left||right) && (top||bottom)) return true;
+            if((left||right) && (top||bottom)) return true;
+        }
         return false;
     }
 

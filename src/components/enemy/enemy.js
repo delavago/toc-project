@@ -2,13 +2,13 @@ import { useEffect, useRef } from 'react';
 import EnemyClass from '../../entity/enemyClass';
 import EnemyLogic from '../../gameLogic/enemyLogic';
 
-let Enemy = ({height=50, width=50, color="#ffff00", gameAreaPosition, enemyObj = new EnemyClass(), position, addToRefList, index, setEnemyObjs, enemyObjs, playerRef}) => {
+let Enemy = ({height=50, width=50, color="#ffff00", gameAreaPosition, enemyObj = new EnemyClass(), position, addToRefList, index, setEnemyObjs, enemyObjs, playerRef,reducePlayerScore}) => {
 
     let ref = useRef(null)
 
     useEffect(()=>{
         addToRefList(ref)
-        EnemyLogic.move(position,gameAreaPosition,ref,index,setEnemyObjs,enemyObjs, playerRef)
+        EnemyLogic.move(position,gameAreaPosition,ref,index,setEnemyObjs,enemyObjs, playerRef,reducePlayerScore)
     },[])
 
     return (

@@ -9,7 +9,7 @@ let Player = ({height=50, width=50, color="#ffff00", gameAreaPosition, playerObj
             ref={playerObjRef}
             onKeyDown={(event)=>{
                 let enemyOverlap =  PositionHelper.playerEnemyOverLapCheckByRef(playerObjRef,"enemy");
-                if(enemyOverlap!==null) alert("Enemy overlap");
+                // if(enemyOverlap!==null) alert("Enemy overlap");
                 playerObj.move(setPostion,event.code, position, gameAreaPosition,playerObjRef.current.getBoundingClientRect())
                
                 setPlayerObj({...playerObj,position: position});
